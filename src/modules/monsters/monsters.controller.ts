@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, UsePipes } from '@nestjs/common';
 import { MonstersService } from './monsters.service';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { UpdateMonsterDto } from './dto/update-monster.dto';
@@ -10,7 +10,8 @@ export class MonstersController {
   constructor(private readonly monstersService: MonstersService) {}
 
   @Post()
-  create(@Body() createMonsterDto: CreateMonsterDto) {
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async create(@Body() createMonsterDto: CreateMonsterDto) {
     return this.monstersService.create(createMonsterDto);
   }
 

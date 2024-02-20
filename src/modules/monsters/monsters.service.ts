@@ -1,11 +1,20 @@
-import { Injectable } from '@nestjs/common';
 import { CreateMonsterDto } from './dto/create-monster.dto';
 import { UpdateMonsterDto } from './dto/update-monster.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Injectable, Inject } from '@nestjs/common';
+import { Monster } from './schemas/monster.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class MonstersService {
-  create(createMonsterDto: CreateMonsterDto) {
-    return 'This action adds a new monster';
+  constructor(
+    @InjectModel(Monster.name)
+    private monsterModel: Model<Monster>,
+  ) {}
+
+  async create(createMonsterDto: CreateMonsterDto): Promise<Monster> {
+    const createdMonster = new this.monsterModel(createMonsterDto);
+    return createdMonster.save();
   }
 
   findAll() {
