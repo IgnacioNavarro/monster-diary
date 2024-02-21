@@ -3,13 +3,13 @@ import { UpdateMonsterDto } from './dto/update-monster.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, Inject } from '@nestjs/common';
 import { Monster } from './schemas/monster.schema';
-import { Model } from 'mongoose';
+import { Model, PaginateModel } from 'mongoose';
 
 @Injectable()
 export class MonstersService {
   constructor(
     @InjectModel(Monster.name)
-    private monsterModel: Model<Monster>,
+    private monsterModel: PaginateModel<Monster>,
   ) {}
 
   async create(createMonsterDto: CreateMonsterDto): Promise<Monster> {
@@ -17,19 +17,30 @@ export class MonstersService {
     return createdMonster.save();
   }
 
-  findAll() {
-    return `This action returns all monsters`;
+  async findAll(query): Promise<Monster[]> {
+
+    return this.monsterModel.paginate({},{
+      page: query.page,
+      limit: query.limit
+    
+    }).then((result) => {
+      return result.docs;
+    }
+    );
+    //return this.monsterModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} monster`;
+  async findOne(id: string):Promise<Monster> {
+    return this.monsterModel.findById({_id: id}).exec();
+    
   }
 
-  update(id: number, updateMonsterDto: UpdateMonsterDto) {
-    return `This action updates a #${id} monster`;
+  async update(id: string, updateMonsterDto: UpdateMonsterDto): Promise<Monster> {
+    return this.monsterModel.findByIdAndUpdate({_id: id}, updateMonsterDto, {new: true}).exec();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} monster`;
+  async remove(id: string): Promise<Monster> {
+    const result = await this.monsterModel.findByIdAndDelete({_id: id}).exec();
+    return result;
   }
 }

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { userRole } from "../roles";
+import { userRole } from "../roles.enum";
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 
 @Schema({ collection: 'users' })
 export class User {
@@ -10,11 +11,13 @@ export class User {
     @Prop({ required: true })
     password: string;
 
-    @Prop({type:String, enum:userRole, required: true })
-    role: userRole;
+    @Prop({type:Array, enum:userRole, default: [userRole.EMPLOYEE]})
+    roles: userRole[];
 
 }
 
 export const userSchema = SchemaFactory.createForClass(User).index({username: 1}, {unique: true});
+
+userSchema.plugin(mongoosePaginate);
 
 

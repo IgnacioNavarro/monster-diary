@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { monsterGender, monsterTitle, monsterNationality } from "../enums";
 
+import * as mongoosePaginate from 'mongoose-paginate-v2';
+
 @Schema({ collection: 'monsters' })
 export class Monster {
     id: string;
@@ -19,7 +21,11 @@ export class Monster {
     @Prop({ required: true })
     description: String;
 
-    @Prop({type: String, enum: monsterNationality, required: true })
+    @Prop({
+        type: Array,
+        enum: monsterNationality,
+        required: true
+    })
     nationality: monsterNationality[];
 
     @Prop()
@@ -43,4 +49,7 @@ export class Monster {
 }
 
 
+
 export const monsterSchema = SchemaFactory.createForClass(Monster).index({firstName: 1, lastName: 1}, {unique: true});
+
+monsterSchema.plugin(mongoosePaginate);

@@ -26,7 +26,7 @@ export class CreateMonsterDto {
 
     @ApiProperty()
     @IsEnum(monsterNationality, { each: true })
-    nationality: monsterNationality;
+    nationality: monsterNationality[];
 
     @ApiProperty()
     @IsUrl()
