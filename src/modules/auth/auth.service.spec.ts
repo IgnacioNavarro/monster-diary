@@ -3,6 +3,10 @@ import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { create } from 'domain';
 import { getModelToken } from '@nestjs/mongoose';
+import { closeInMongodConnection, rootMongooseTestModule } from '../../mongodb-test-in-memory';
+import { AuthModule } from './auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from '../users/users.module';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -29,6 +33,9 @@ describe('AuthService', () => {
        {provide: getModelToken(mockUser.username),
         useValue: mockJwtService
        },],
+       imports: [rootMongooseTestModule(),
+        AuthModule, ConfigModule.forRoot(), UsersModule],
+
     }).compile();
 
     service = module.get<AuthService>(AuthService);
@@ -38,4 +45,8 @@ describe('AuthService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  afterEach(async () => {
+    await closeInMongodConnection();
+  })
 });

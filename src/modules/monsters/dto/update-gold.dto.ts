@@ -4,7 +4,7 @@ import { IsInt, IsNumber, IsPositive, Matches } from "class-validator";
 export class UpdateGoldDto {
 
     @ApiProperty()
-    //@IsPositive()
+    @IsPositive()
     @IsInt()
     amount: number;
 }

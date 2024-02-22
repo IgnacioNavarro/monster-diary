@@ -4,8 +4,10 @@ import { UsersService } from './users.service';
 import { AuthController } from '../auth/auth.controller';
 import { AuthModule } from '../auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User } from './schemas/user.schema';
+import { User, userSchema } from './schemas/user.schema';
 import { UsersModule } from './users.module';
+import { ConfigModule } from '@nestjs/config';
+import { closeInMongodConnection, rootMongooseTestModule } from '../../mongodb-test-in-memory';
 
 
 describe('UsersController', () => {
@@ -21,6 +23,10 @@ describe('UsersController', () => {
     roles: ['admin'],
   };
 
+  const mockMongooseModule= {
+    // Mock the methods used by your UserModel here.
+  };
+
   const mockUsersService = {
     create: jest.fn().mockResolvedValue(mockUser),
     findAll: jest.fn().mockResolvedValue([mockUser]),
@@ -30,17 +36,35 @@ describe('UsersController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule],
-      controllers: [UsersController],
-      providers: [UsersModule,{provide: UsersService, useValue: mockUsersService}
+      imports: [rootMongooseTestModule(),
+         AuthModule, ConfigModule.forRoot()
+      , MongooseModule.forFeature([{ name: User.name, schema: userSchema }])
       ],
+      controllers: [UsersController],
+      providers: [
+        UsersService
+        
+        // UsersModule,
+        // {
+        //   provide: UsersService,
+        //   useValue: mockUsersService
+        // },
+        // {
+        //   provide: MongooseModule,
+        //   useValue: mockMongooseModule
+        // }
+        ],
     }).compile();
 
-    controller = module.get<UsersController>(UsersController);
     service = module.get<UsersService>(UsersService);
+    controller = module.get<UsersController>(UsersController);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+
+  afterEach(async () => {
+    await closeInMongodConnection();
+  })
 });

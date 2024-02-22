@@ -11,6 +11,7 @@ import { RolesGuard } from '../users/roles.guard';
 import { isInt } from 'class-validator';
 import { MonstersVoteService } from './monsters-vote.service';
 import { voteMonsterDto } from './dto/vote-monster.dto';
+import { UpdateGoldDto } from './dto/update-gold.dto';
 
 @ApiTags('monsters')
 @Controller('monsters')
@@ -89,10 +90,8 @@ export class MonstersController {
   @ApiOkResponse()
   @ApiNotFoundResponse()
   @ApiParam({name: 'id', required: true, type: String})
-  async addGold(@Param('id') id: string, @Body() updateGoldDto) {
-    if(updateGoldDto.amount < 0 || !isInt(updateGoldDto.amount) ){
-      throw new BadRequestException("Amount must be a positive number with no decimal places.");
-    }
+  async addGold(@Param('id') id: string, @Body() updateGoldDto: UpdateGoldDto) {
+
     const monster = await this.monstersService.addGold(id, updateGoldDto);
     if (!monster) {
       throw new NotFoundException( `Monster with id ${id} not found`);
@@ -106,10 +105,8 @@ export class MonstersController {
   @ApiOkResponse()
   @ApiNotFoundResponse()
   @ApiParam({name: 'id', required: true, type: String})
-  async removeGold(@Param('id') id: string, @Body() updateGoldDto) {
-    if(updateGoldDto.amount < 0 || !isInt(updateGoldDto.amount) ){
-      throw new BadRequestException("Amount must be a positive number with no decimal places.");
-    }
+  async removeGold(@Param('id') id: string, @Body() updateGoldDto: UpdateGoldDto) {
+    
     const monster = await this.monstersService.removeGold(id, updateGoldDto);
     if (!monster) {
       throw new NotFoundException( `Monster with id ${id} not found`);

@@ -3,9 +3,12 @@ import { MonstersController } from './monsters.controller';
 import { MonstersService } from './monsters.service';
 import { AuthModule } from '../auth/auth.module';
 import { Mongoose } from 'mongoose';
-import { MongooseModule } from '@nestjs/mongoose';
+import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { UsersModule } from '../users/users.module';
 import { MonstersVoteService } from './monsters-vote.service';
+import { ConfigModule } from '@nestjs/config';
+import { closeInMongodConnection, rootMongooseTestModule } from '../../mongodb-test-in-memory';
+import { User, userSchema } from '../users/schemas/user.schema';
 
 describe('MonstersController', () => {
   let controller: MonstersController;
@@ -42,10 +45,15 @@ describe('MonstersController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule, UsersModule],
+      imports: [rootMongooseTestModule(),
+        AuthModule, ConfigModule.forRoot()
+     , MongooseModule.forFeature([{ name: User.name, schema: userSchema }]), UsersModule],
       controllers: [MonstersController],
-      providers: [{
-        provide: MonstersService,
+      providers: [
+        MonstersService,
+        MonstersVoteService,
+        {
+        provide: getModelToken('Monster'),
         useValue: mockMonstersService,
       },
       {
@@ -62,4 +70,8 @@ describe('MonstersController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+
+  afterEach(async () => {
+    await closeInMongodConnection();
+  })
 });
