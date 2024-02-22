@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { monsterGender, monsterTitle, monsterNationality } from "../enums";
+import { monsterGender, monsterTitle, monsterNationality, monsterVotes } from "../utils";
 
 import * as mongoosePaginate from 'mongoose-paginate-v2';
 
@@ -19,7 +19,7 @@ export class Monster {
     gender: monsterGender;
 
     @Prop({ required: true })
-    description: String;
+    description: string;
 
     @Prop({
         type: Array,
@@ -29,24 +29,29 @@ export class Monster {
     nationality: monsterNationality[];
 
     @Prop()
-    imageUrl: String;
+    imageUrl: string;
 
     @Prop({ required: true })
-    goldBalance: Number;
+    goldBalance: number;
 
     @Prop({ required: true })
-    speed: Number;
+    speed: number;
 
     @Prop({ required: true })
-    Health: Number;
+    Health: number;
 
     @Prop()
-    secretNotes: String;
+    secretNotes: string;
 
     @Prop()
-    monsterPassword: String;
+    monsterPassword: string;
+
+    @Prop()
+    votes: string[];
+
 
 }
+
 
 
 

@@ -1,5 +1,5 @@
 import e from "express";
-import { monsterGender, monsterNationality, monsterTitle } from "../enums";
+import { monsterGender, monsterNationality, monsterTitle, monsterVotes } from "../utils";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsDecimal, IsEnum, IsInt, IsNumber, IsString, IsUrl } from 'class-validator';
 
@@ -22,7 +22,7 @@ export class CreateMonsterDto {
 
     @ApiProperty()
     @IsString()
-    description: String;
+    description: string;
 
     @ApiProperty()
     @IsEnum(monsterNationality, { each: true })
@@ -31,26 +31,29 @@ export class CreateMonsterDto {
     @ApiProperty()
     @IsUrl()
     @IsString()
-    imageUrl: String;
+    imageUrl: string;
 
     @ApiProperty()
     @IsInt()
-    goldBalance: Number;
+    goldBalance: number;
 
     @ApiProperty()
     @IsNumber({ maxDecimalPlaces: 2 })
-    speed: Number;
+    speed: number;
 
     @ApiProperty()
     @IsNumber({ maxDecimalPlaces: 2 })
-    Health: Number;
+    Health: number;
 
     @ApiProperty()
     @IsString()
-    secretNotes: String;
+    secretNotes: string;
 
     @ApiProperty()
     @IsString()
-    monsterPassword: String;
+    monsterPassword: string;
+
+    @ApiProperty()
+    votes: string[];
 }
 

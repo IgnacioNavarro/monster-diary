@@ -4,6 +4,15 @@ export enum monsterGender {
     OTHER = 'Other'
 }
 
+export class monsterVotes {
+    lastWeeks: Map<string, Array<string>>;
+    actualWeek: Map<string, Array<string>>;
+}
+
+export class initialMonsterVotes {
+    lastWeeks: {"0-0-0": ["initial"]};
+    actualWeek: {"0-0-0": ["initial"]};
+}
 
 export enum monsterTitle {
     MR = 'Mr',

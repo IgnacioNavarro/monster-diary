@@ -1,11 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { MonstersModule } from './modules/monsters/monsters.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { GlobalExceptionFilter } from './modules/exception-filters/http-exception.filter';
 import { RolesGuard } from './modules/users/roles.guard';
 import { AuthModule } from './modules/auth/auth.module';
@@ -28,6 +28,13 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     useClass: GlobalExceptionFilter,
   },
 
+  {
+    provide: APP_PIPE,
+    useValue: new ValidationPipe({
+      whitelist: true,
+      transform: true,
+    }),
+  },
   {
     provide: APP_GUARD,
     useClass: ThrottlerGuard

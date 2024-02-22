@@ -42,14 +42,10 @@ export class GlobalExceptionFilter<T> implements ExceptionFilter {
 }
 
 function parseException(exception){
-  const result = exception["response"]["message"];
-  if(result){
-    try{
-      return result[0]["constraints"];
+
+  if(exception.message === "Bad Request Exception"){
+    return exception["response"]["message"];
   }
-  catch(e){
-    return result;
-  }
-  }
+
   return exception;
 }

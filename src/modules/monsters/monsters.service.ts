@@ -4,6 +4,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, Inject } from '@nestjs/common';
 import { Monster } from './schemas/monster.schema';
 import { Model, PaginateModel } from 'mongoose';
+import { UpdateGoldDto } from './dto/update-gold.dto';
+import { initialMonsterVotes}  from './utils';
+import { last } from 'rxjs';
 
 @Injectable()
 export class MonstersService {
@@ -14,6 +17,11 @@ export class MonstersService {
 
   async create(createMonsterDto: CreateMonsterDto): Promise<Monster> {
     const createdMonster = new this.monsterModel(createMonsterDto);
+    if(!createdMonster.votes){
+      createdMonster.votes = [];
+    }
+
+
     return createdMonster.save();
   }
 
@@ -27,7 +35,6 @@ export class MonstersService {
       return result.docs;
     }
     );
-    //return this.monsterModel.find().exec();
   }
 
   async findOne(id: string):Promise<Monster> {
@@ -43,4 +50,20 @@ export class MonstersService {
     const result = await this.monsterModel.findByIdAndDelete({_id: id}).exec();
     return result;
   }
+
+  async addGold(id: string, updateGoldDto: UpdateGoldDto): Promise<Monster> {
+    const monster = await this.monsterModel.findById(id);
+    monster.goldBalance += updateGoldDto.amount;
+    return await monster.save();
+  }
+
+  async removeGold(id: string, updateGoldDto: UpdateGoldDto): Promise<Monster> {
+    const monster = await this.monsterModel.findById(id);
+    monster.goldBalance -= updateGoldDto.amount;
+    if(monster.goldBalance < 0){
+      monster.goldBalance = 0;
+    }
+    return await monster.save();
+  }
+
 }
