@@ -64,6 +64,27 @@ describe('UsersController', () => {
     expect(controller).toBeDefined();
   });
 
+  it('should find all users', async () => {
+    const users = await controller.findAll({limit: 10, page: 1});
+    expect(users).toBeDefined();
+  });
+
+
+  it('should add a user', async () => {
+    const user = await controller.create({
+      username: 'testing',
+      password: 'password',
+    });
+    expect(user).toBeDefined();
+  }
+  );
+
+  it('should find a user by username', async () => {
+    const user = await controller.findOneByUsername('test');
+    expect(user).toBeDefined();
+  }
+  );
+
   afterEach(async () => {
     await closeInMongodConnection();
   })
